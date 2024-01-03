@@ -7,7 +7,8 @@
   >
     <el-table-column prop="id" label="员工号" width="180"></el-table-column>
     <el-table-column prop="name" label="员工名字" width="180"></el-table-column>
-    <el-table-column prop="did" label="部门号" width="180"> </el-table-column>
+    <el-table-column prop="dname" label="部门名称" width="180">
+    </el-table-column>
     <el-table-column prop="sex" label="性别"></el-table-column>
     <el-table-column prop="age" label="年龄"></el-table-column>
     <el-table-column prop="occupation" label="职位"></el-table-column>
@@ -36,11 +37,14 @@
       :model="formLabelAlign"
       style="max-width: 460px"
     >
+      <el-form-item label="员工号">
+        <el-input v-model="formLabelAlign.id" />
+      </el-form-item>
       <el-form-item label="员工名">
         <el-input v-model="formLabelAlign.name" />
       </el-form-item>
-      <el-form-item label="部门号">
-        <el-input v-model="formLabelAlign.did" />
+      <el-form-item label="部门名称">
+        <el-input v-model="formLabelAlign.dname" />
       </el-form-item>
       <el-form-item label="性别">
         <el-input v-model="formLabelAlign.sex" />
@@ -57,21 +61,21 @@
       </el-form-item>
     </el-form>
   </div>
-  <div class="addBody" :class="{ flex: close }">
+  <div class="addBody" :class="{ flex: addActive }">
     <el-form
       :label-position="labelPosition"
       label-width="60px"
       :model="formLabelAlign"
       style="max-width: 460px"
     >
-      <el-form-item label="员工号">
+      <!-- <el-form-item label="员工号">
         <el-input v-model="formLabelAlign.id" />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="员工名">
         <el-input v-model="formLabelAlign.name" />
       </el-form-item>
-      <el-form-item label="部门号">
-        <el-input v-model="formLabelAlign.did" />
+      <el-form-item label="部门名称">
+        <el-input v-model="formLabelAlign.dname" />
       </el-form-item>
       <el-form-item label="性别">
         <el-input v-model="formLabelAlign.sex" />
@@ -100,34 +104,37 @@ import API from "../axios/index";
 import { useRouter } from "vue-router";
 import { nextTick } from "vue";
 import type { FormProps } from "element-plus";
+import { ElMessage } from "element-plus";
 
+const onlyPage = 1
 let close = ref(false);
+let addActive = ref(false);
 let globleID = ref("-1");
 const formLabelAlign = reactive({
   id: "",
   name: "",
-  did: "",
+  dname: "",
   sex: "",
   age: "",
   occupation: "",
 });
 const labelPosition = ref<FormProps["labelPosition"]>("right");
 
-const refresh = () => {
-  API({
+const refresh = async (page) => {
+  const res = await API({
     url: "/employee/page",
     method: "get",
     params: {
-      page: 1,
+      page: page || 1,
       pageSize: 10,
     },
-  }).then((res) => {
-    tableData = res.data.data.data;
-    total = res.data.data.total;
-    console.log(tableData);
-
-    // slicedTableData = ref(tableData.slice(0, 10));
   });
+
+  tableData.value = res.data.data.data;
+  total.value = res.data.data.total;
+  console.log(total.value);
+
+  nextTick();
 };
 
 let renew = () => {
@@ -135,54 +142,57 @@ let renew = () => {
   formLabelAlign.name = "";
   formLabelAlign.age = "";
   formLabelAlign.occupation = "";
-  formLabelAlign.did = "";
+  formLabelAlign.dname = "";
   formLabelAlign.sex = "";
 };
 
 const delet = (row) => {
-  // const foundIndex = tableData.findIndex((data) => data.ID === row.id);
+  const currentPageValue = currentPage.value;
   API({
     url: "/employee/delete",
-    method: "post",
-    data: {
-      ID: row.id,
+    method: "get",
+    params: {
+      id: row.id,
     },
+  }).then(() => {
+    refresh(currentPageValue);
   });
-  refresh();
-  // if (foundIndex !== -1) {
-  //   tableData.splice(foundIndex, 1);
-  //   refresh();
-  //   nextTick();
-  // }
 };
 
 const addEmployee = () => {
-  close.value = true;
+  addActive.value = true;
+};
+
+const open1 = () => {
+  ElMessage({
+    showClose: true,
+    message: "成功",
+    type: "success",
+  });
 };
 
 const addCirfmon = () => {
-  // const newEmployee = {
-  //   ID: formLabelAlign.id,
-  //   name: formLabelAlign.name,
-  //   departmentID: formLabelAlign.did,
-  //   sex: formLabelAlign.sex,
-  //   age: parseInt(formLabelAlign.age, 10),
-  //   occupation: formLabelAlign.occupation,
-  // };
+  let employee = formLabelAlign;
+  
+  employee.did = 1;
   API({
     url: "/employee/add",
     method: "post",
-    data: formLabelAlign,
+    data: employee,
+  }).then((res) => {
+    open1();
   });
   // tableData.push(newEmployee);
   renew();
-  close.value = false;
-  refresh();
+  addActive.value = false;
+  refresh(onlyPage);
   // updateSlicedTableData();
 };
 
 const addClose = () => {
-  close.value = false;
+  console.log(789);
+
+  addActive.value = false;
 };
 
 const input = ref("");
@@ -190,52 +200,50 @@ const input = ref("");
 const searchEmployees = () => {
   // 如果输入框内容为空，显示所有员工
   if (input.value === "") {
-    refresh();
+    refresh(onlyPage);
   } else {
     // 否则根据输入内容过滤员工
-    const keyword = input.value.toLowerCase();
-    // API({
-    //   url:'',
-    //   method: 'get',
-    //   params: {
-    //     keyword: keyword
-    //   }
-    // })
-    // const filteredData = tableData.filter((employee) =>
-    //   Object.values(employee).some(
-    //     (value) => value && value.toString().toLowerCase().includes(keyword)
-    //   )
-    // );
-    // slicedTableData.value = filteredData.slice(0, 10);
+    const msg = input.value.toLowerCase();
+    API({
+      url: "",
+      method: "get",
+      params: {
+        msg: msg,
+        pageSize: 10,
+        page: currentPage,
+      },
+    }).then((res) => {
+      tableData.value = res.data.data.data;
+    });
   }
 };
 const cancle = () => {
+  console.log(147);
+
   close.value = false;
 };
 
 const confirm = () => {
-  // const foundRow = tableData.find((data) => data.ID === globleID.value);
-  // if (foundRow) {
-  //   // 修改找到的数据的值
-  //   foundRow.name = formLabelAlign.name;
-  //   foundRow.did = formLabelAlign.did;
-  //   foundRow.sex = formLabelAlign.sex;
-  //   foundRow.age = parseInt(formLabelAlign.age, 10);
-  //   foundRow.occupation = formLabelAlign.occupation;
-  // }
+  let employee = formLabelAlign;
+  console.log(formLabelAlign);
+  console.log(employee);
+
   API({
     url: "/employee/update",
     method: "post",
-    data: formLabelAlign,
+    data: employee,
   });
+  // tableData.push(newEmployee);
   renew();
   close.value = false;
+  refresh(onlyPage);
 };
 
 const changeClient = (row) => {
   close.value = true;
+  formLabelAlign.id = row.id;
   formLabelAlign.name = row.name;
-  formLabelAlign.did = row.did;
+  formLabelAlign.dname = row.dname;
   formLabelAlign.sex = row.sex;
   formLabelAlign.age = row.age;
   formLabelAlign.occupation = row.occupation;
@@ -244,7 +252,7 @@ const changeClient = (row) => {
 
 const router = useRouter();
 
-let tableData = {};
+let tableData = ref([]);
 // let pageInfo: {
 //   page: 0;
 //   pageSize: 10;
@@ -266,9 +274,6 @@ const changeSliced = () => {
 };
 
 const updateSlicedTableData = () => {
-  const start = (currentPage.value - 1) * pageSize;
-  const end = start + pageSize;
-  let Data;
   // slicedTableData.value = tableData.slice(start, end);
   API({
     url: "/employee/page",
@@ -278,18 +283,17 @@ const updateSlicedTableData = () => {
       pageSize: pageSize,
     },
   }).then((res) => {
-    Data = res.data.data.data;
+    tableData.value = res.data.data.data;
+    // $message.success(res.data.data.msg);
   });
 };
 
 const handleRowClick = (row) => {
-  const name = row.name;
-
-  console.log("Clicked Name:", name);
-  router.push("/wage");
+  const id = row.id;
+  router.push({ path: "/wage", query: { id: id } });
 };
 onMounted(() => {
-  refresh();
+  refresh(onlyPage);
 });
 </script>
 

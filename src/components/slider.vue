@@ -1,21 +1,46 @@
 <template>
   <el-container class="layout-container-demo" style="height: 100vh">
-    <el-aside width="200px" style="padding-top: 60px">
+    <el-aside width="200px">
       <el-scrollbar>
-        <el-menu :default-openeds="['1', '3']">
-          <el-sub-menu index="1" @click="toClient">
-            <template #title> 员工 </template>
+        <el-menu
+          :default-openeds="['1', '3']"
+          background-color="rgba(70, 76, 91, 1)"
+        >
+          <el-sub-menu index="1" @click="toHome">
+            <template #title>
+              <span style="color: aliceblue">首页</span>
+            </template>
           </el-sub-menu>
-          <el-sub-menu index="2" @click="toDepartment">
-            <template #title> 部门 </template>
+          <el-sub-menu index="2" @click="toClient">
+            <template #title>
+              <span style="color: aliceblue">员工</span>
+            </template>
           </el-sub-menu>
+          <el-sub-menu index="3" @click="toDepartment">
+            <template #title
+              ><span style="color: aliceblue">部门</span>
+            </template>
+          </el-sub-menu>
+          <el-sub-menu index="3" @click="toDepartment"> </el-sub-menu>
+          <el-sub-menu index="3" @click="toDepartment"> </el-sub-menu>
+          <el-sub-menu index="3" @click="toDepartment"> </el-sub-menu>
+          <el-sub-menu index="3" @click="toDepartment"> </el-sub-menu>
+          <el-sub-menu index="3" @click="toDepartment"> </el-sub-menu>
+          <el-sub-menu index="3" @click="toDepartment"> </el-sub-menu>
+          <el-sub-menu index="3" @click="toDepartment"> </el-sub-menu>
+          <el-sub-menu index="3" @click="toDepartment"> </el-sub-menu>
+          <el-sub-menu index="3" @click="toDepartment"> </el-sub-menu>
+          <el-sub-menu index="3" @click="toDepartment"> </el-sub-menu>
+          <el-sub-menu index="3" @click="toDepartment"> </el-sub-menu>
+          <el-sub-menu index="3" @click="toDepartment"> </el-sub-menu>
+          <el-sub-menu index="3" @click="toDepartment"> </el-sub-menu>
+          <el-sub-menu index="3" @click="toDepartment"> </el-sub-menu>
+          <el-sub-menu index="3" @click="toDepartment"> </el-sub-menu>
         </el-menu>
       </el-scrollbar>
     </el-aside>
 
     <el-container>
-      <el-header style="text-align: right; font-size: 12px"> </el-header>
-
       <el-main>
         <router-view></router-view>
       </el-main>
@@ -33,6 +58,10 @@ const item = {
   date: "2016-05-02",
   name: "Tom",
   address: "No. 189, Grove St, Los Angeles",
+};
+
+const toHome = () => {
+  router.push("/home");
 };
 
 const toClient = () => {
