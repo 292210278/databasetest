@@ -1,6 +1,12 @@
 const routes = [
   {
     path: "/",
+    name: "login",
+    title: "登录",
+    component: () => import("../components/login.vue"), //.vue不能省略
+  },
+  {
+    path: "/n",
     name: "slider",
     title: "侧边栏",
     component: () => import("../components/slider.vue"), //.vue不能省略
@@ -30,12 +36,6 @@ const routes = [
         component: () => import("../components/wage.vue"), //.vue不能省略
       },
     ],
-  },
-  {
-    path: "/login",
-    name: "login",
-    title: "登录",
-    component: () => import("../components/login.vue"), //.vue不能省略
   },
 ];
 export default routes;

@@ -1,4 +1,18 @@
 <template>
+  <el-input
+    v-model="input"
+    placeholder="请输入员工名或员工号"
+    style="width: 200px"
+    @input="searchEmployees"
+  />
+  <!-- <el-button type="primary" @click="searchEmployees">查询</el-button> -->
+  <el-button
+    type="primary"
+    @click="addEmployee"
+    style="margin: 20px; margin-left: 1300px"
+    >添加新员工</el-button
+  >
+
   <el-table
     :data="tableData"
     style="width: 100%"
@@ -30,7 +44,10 @@
     @current-change="handlePageChange"
   />
 
-  <div class="changeBody" :class="{ flex: close }">
+  <div
+    class="changeBody animate__animated"
+    :class="{ flex: close, animate__fadeIn: close }"
+  >
     <el-form
       :label-position="labelPosition"
       label-width="60px"
@@ -61,7 +78,13 @@
       </el-form-item>
     </el-form>
   </div>
-  <div class="addBody" :class="{ flex: addActive }">
+  <div
+    class="addBody animate__animated"
+    :class="{
+      flex: addActive,
+      animate__fadeIn: addActive,
+    }"
+  >
     <el-form
       :label-position="labelPosition"
       label-width="60px"
@@ -92,9 +115,6 @@
       </el-form-item>
     </el-form>
   </div>
-  <el-button type="primary" @click="addEmployee">添加新员工</el-button>
-  <el-input v-model="input" placeholder="Please input" style="width: 200px" />
-  <el-button type="primary" @click="searchEmployees">查询</el-button>
 </template>
 
 <script lang="ts" setup>
@@ -106,7 +126,6 @@ import { nextTick } from "vue";
 import type { FormProps } from "element-plus";
 import { ElMessage } from "element-plus";
 
-const onlyPage = 1
 let close = ref(false);
 let addActive = ref(false);
 let globleID = ref("-1");
@@ -173,19 +192,23 @@ const open1 = () => {
 
 const addCirfmon = () => {
   let employee = formLabelAlign;
-  
+  const currentPageValue = currentPage.value;
   employee.did = 1;
   API({
     url: "/employee/add",
     method: "post",
     data: employee,
-  }).then((res) => {
-    open1();
-  });
+  })
+    .then((res) => {
+      open1();
+    })
+    .then(() => {
+      refresh(currentPageValue);
+    });
   // tableData.push(newEmployee);
   renew();
   addActive.value = false;
-  refresh(onlyPage);
+
   // updateSlicedTableData();
 };
 
@@ -195,22 +218,23 @@ const addClose = () => {
   addActive.value = false;
 };
 
-const input = ref("");
+let input = ref("");
 
 const searchEmployees = () => {
+  const currentPageValue = currentPage.value;
   // 如果输入框内容为空，显示所有员工
   if (input.value === "") {
-    refresh(onlyPage);
+    refresh(currentPageValue);
   } else {
     // 否则根据输入内容过滤员工
     const msg = input.value.toLowerCase();
     API({
-      url: "",
+      url: "/employee/searcher",
       method: "get",
       params: {
         msg: msg,
         pageSize: 10,
-        page: currentPage,
+        page: 1,
       },
     }).then((res) => {
       tableData.value = res.data.data.data;
@@ -218,25 +242,23 @@ const searchEmployees = () => {
   }
 };
 const cancle = () => {
-  console.log(147);
-
   close.value = false;
 };
 
 const confirm = () => {
   let employee = formLabelAlign;
-  console.log(formLabelAlign);
-  console.log(employee);
+  const currentPageValue = currentPage.value;
 
   API({
     url: "/employee/update",
     method: "post",
     data: employee,
+  }).then(() => {
+    refresh(currentPageValue);
   });
   // tableData.push(newEmployee);
   renew();
   close.value = false;
-  refresh(onlyPage);
 };
 
 const changeClient = (row) => {
@@ -293,7 +315,7 @@ const handleRowClick = (row) => {
   router.push({ path: "/wage", query: { id: id } });
 };
 onMounted(() => {
-  refresh(onlyPage);
+  refresh(1);
 });
 </script>
 

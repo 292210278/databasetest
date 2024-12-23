@@ -5,6 +5,7 @@ import router from "./router/index";
 import App from "./App.vue";
 import ECharts from "vue-echarts";
 import "echarts";
+import "animate.css";
 
 const app = createApp(App);
 app.component("v-chart", ECharts);

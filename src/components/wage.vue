@@ -1,15 +1,23 @@
 <template>
-  <el-table :data="tableData" style="width: 100%" :row-key="(row) => row.date">
-    <el-table-column prop="id" label="员工号" width="180" />
-    <el-table-column prop="name" label="员工名字" width="180" />
-    <el-table-column prop="wage" label="基本工资"> </el-table-column>
-    <el-table-column prop="bonus" label="奖金"> </el-table-column>
-    <el-table-column prop="insurance" label="五险"> </el-table-column>
-    <el-table-column prop="actualSalary" label="实际薪资"> </el-table-column>
+  <el-table :data="tableData" style="width: 100%" :row-key="(row) => row.id">
+    <el-table-column prop="id" label="薪资号" width="180" />
+    <el-table-column
+      prop="ename"
+      label="员工名字"
+      width="180"
+    /><el-table-column prop="month" label="月份"> </el-table-column>
+    <el-table-column prop="baseSalary" label="基本工资"> </el-table-column>
+    <el-table-column prop="bonusSalary" label="奖金"> </el-table-column>
+    <el-table-column prop="deductSalary" label="扣除">
+      <template #default="{ row }"
+        ><el-button type="danger"> {{ row.deductSalary }}</el-button></template
+      >
+    </el-table-column>
+    <el-table-column prop="fiveInsurances" label="五险"> </el-table-column>
+    <el-table-column prop="totalSalary" label="实际薪资"> </el-table-column>
     <el-table-column label="操作">
       <template #default="{ row }">
         <el-button type="primary" @click.stop="changeWage(row)">编辑</el-button>
-        <el-button type="danger" @click.stop="">删除</el-button>
       </template>
     </el-table-column>
   </el-table>
@@ -20,17 +28,20 @@
       :model="formLabelAlign"
       style="max-width: 460px"
     >
+      <el-form-item label-width="80px">
+        <span style="color: red">五险为基础工资的百分之二十!!</span>
+      </el-form-item>
       <el-form-item label="员工名" label-width="80px">
-        <el-input v-model="formLabelAlign.name" />
+        <el-input v-model="formLabelAlign.ename" />
       </el-form-item>
       <el-form-item label="基础工资" label-width="80px">
-        <el-input v-model="formLabelAlign.wage" />
+        <el-input v-model="formLabelAlign.baseSalary" />
       </el-form-item>
       <el-form-item label="奖金" label-width="80px">
-        <el-input v-model="formLabelAlign.bonus" />
+        <el-input v-model="formLabelAlign.bonusSalary" />
       </el-form-item>
       <el-form-item label="实际工资" label-width="80px">
-        <el-input v-model="formLabelAlign.actualSalary" />
+        <el-input v-model="formLabelAlign.totalSalary" />
       </el-form-item>
 
       <el-form-item>
@@ -53,37 +64,30 @@ const router = useRouter();
 const labelPosition = ref<FormProps["labelPosition"]>("right");
 let close = ref(false);
 // let tableData = ref([]);
-let tableData = ref([
-  {
-    id: "2016-05-03",
-    name: "Tom",
-    wage: 5000,
-    bonus: 1000,
-    insurance: 800,
-    actualSalary: 6800,
-  },
-]);
+let tableData = ref([]);
 const formLabelAlign = reactive({
   id: "",
-  name: "",
-  wage: "",
-  bonus: "",
-  insurance: "",
-  actualSalary: "",
+  ename: "",
+  baseSalary: "",
+  deductSalary: "",
+  fiveInsurances: "",
+  totalSalary: "",
+  bonusSalary: "",
+  mouth: "",
 });
 const refresh = async (id) => {
   const res = await API({
-    url: "/employee/getone",
+    url: "/salary/getone",
     method: "get",
     params: {
       id: id,
     },
   });
 
-  tableData.value = res.data.data.data;
-  // total.value = res.data.data.total;
+  tableData.value = res.data.data;
+  console.log(tableData.value);
+
   nextTick();
-  // slicedTableData = ref(tableData.slice(0, 10));
 };
 const cancle = () => {
   close.value = false;
@@ -91,43 +95,39 @@ const cancle = () => {
 
 let renew = () => {
   formLabelAlign.id = "";
-  formLabelAlign.name = "";
-  formLabelAlign.wage = "";
-  formLabelAlign.actualSalary = "";
-  formLabelAlign.insurance = "";
-  formLabelAlign.bonus = "";
+  formLabelAlign.ename = "";
+  formLabelAlign.deductSalary = "";
+  formLabelAlign.totalSalary = "";
+  formLabelAlign.fiveInsurances = "";
+  formLabelAlign.baseSalary = "";
+  formLabelAlign.bonusSalary = "";
 };
 
 const changeWage = (row) => {
   close.value = true;
   formLabelAlign.id = row.id;
-  formLabelAlign.name = row.name;
-  formLabelAlign.wage = row.wage;
-  formLabelAlign.actualSalary = row.actualSalary;
-  formLabelAlign.insurance = row.insurance;
-  formLabelAlign.bonus = row.bonus;
+  formLabelAlign.ename = row.ename;
+  formLabelAlign.baseSalary = row.baseSalary;
+  formLabelAlign.totalSalary = row.totalSalary;
+  formLabelAlign.fiveInsurances = row.fiveInsurances;
+  formLabelAlign.deductSalary = row.deductSalary;
+  formLabelAlign.bonusSalary = row.bonusSalary;
+  formLabelAlign.mouth = row.mouth;
 };
 
 const confirm = () => {
-  // const foundRow = tableData.find((data) => data.ID === globleID.value);
-  // if (foundRow) {
-  //   // 修改找到的数据的值
-  //   foundRow.name = formLabelAlign.name;
-  //   foundRow.did = formLabelAlign.did;
-  //   foundRow.sex = formLabelAlign.sex;
-  //   foundRow.age = parseInt(formLabelAlign.age, 10);
-  //   foundRow.occupation = formLabelAlign.occupation;
-  // }
-  const page = 1;
-  let salary = formLabelAlign;
+  let salary = { ...formLabelAlign };
   API({
     url: "/salary/update",
     method: "post",
     data: salary,
+  }).then(() => {
+    refresh(router.currentRoute.value.query.id);
   });
+
   renew();
+
   close.value = false;
-  refresh(page);
 };
 onMounted(() => {
   refresh(router.currentRoute.value.query.id);

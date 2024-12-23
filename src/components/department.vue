@@ -1,9 +1,13 @@
 <template>
+  <!-- <el-input v-model="" placeholder="Please input" style="width: 200px" />
+  <el-button type="primary" @click="">查询</el-button>
+
+  <el-button type="primary" @click="">添加</el-button> -->
   <el-table :data="tableData" style="width: 100%">
     <el-table-column prop="id" label="部门号" width="180" />
     <el-table-column prop="name" label="部门名" width="180" />
     <el-table-column prop="creatTime" label="创建时间" />
-    <el-table-column prop="dadmin" label="主管" />
+    <el-table-column prop="dname" label="主管" />
     <el-table-column prop="number" label="部门人数" />
   </el-table>
 </template>

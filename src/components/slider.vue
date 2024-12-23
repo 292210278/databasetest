@@ -6,17 +6,22 @@
           :default-openeds="['1', '3']"
           background-color="rgba(70, 76, 91, 1)"
         >
-          <el-sub-menu index="1" @click="toHome">
+          <el-sub-menu @click="toLogin">
+            <template #title>
+              <span style="color: aliceblue">退出</span>
+            </template>
+          </el-sub-menu>
+          <el-sub-menu @click="toHome">
             <template #title>
               <span style="color: aliceblue">首页</span>
             </template>
           </el-sub-menu>
-          <el-sub-menu index="2" @click="toClient">
+          <el-sub-menu @click="toClient">
             <template #title>
               <span style="color: aliceblue">员工</span>
             </template>
           </el-sub-menu>
-          <el-sub-menu index="3" @click="toDepartment">
+          <el-sub-menu @click="toDepartment">
             <template #title
               ><span style="color: aliceblue">部门</span>
             </template>
@@ -42,7 +47,13 @@
 
     <el-container>
       <el-main>
-        <router-view></router-view>
+        <transition
+          enter-active-class="animate__animated animate__fadeIn"
+          leave-active-class="animate__animated animate__fadeOut"
+        >
+          <router-view />
+        </transition>
+        <!-- <router-view></router-view> -->
       </el-main>
     </el-container>
   </el-container>
@@ -62,6 +73,10 @@ const item = {
 
 const toHome = () => {
   router.push("/home");
+};
+
+const toLogin = () => {
+  router.push("/");
 };
 
 const toClient = () => {

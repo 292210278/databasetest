@@ -6,7 +6,8 @@
 </template>
 
 <script setup>
-import { ref, reactive } from "vue";
+import { ref, reactive, onMounted } from "vue";
+import API from "../axios";
 const option = ref({
   backgroundColor: "#2c343c",
   title: {
@@ -101,6 +102,10 @@ const option = ref({
 });
 const option2 = ref({
   backgroundColor: "#2c343c",
+  tooltip: {
+    trigger: "item",
+    formatter: "{a} <br/>{b} : {c} ({d}%)",
+  },
   title: {
     text: "年度支出表",
     left: "center",
@@ -118,14 +123,24 @@ const option2 = ref({
         borderRadius: 5,
       },
       data: [
-        { value: 40000, name: "i经理室" },
-        { value: 38000, name: "财务室" },
-        { value: 52020, name: "技术科" },
-        { value: 30000, name: "售后人员" },
-        { value: 28000, name: "安保科" },
+        // { value: 40000, name: "i经理室" },
+        // { value: 38000, name: "财务室" },
+        // { value: 52020, name: "技术科" },
+        // { value: 30000, name: "售后人员" },
+        // { value: 28000, name: "安保科" },
       ],
     },
   ],
+});
+onMounted(() => {
+  API({
+    url: "/salary/option",
+    method: "get",
+  }).then((res) => {
+    option2.value.series[0].data = res.data.data;
+    console.log(option2.value);
+    console.log(res.data.data);
+  });
 });
 </script>
 <style scoped>
