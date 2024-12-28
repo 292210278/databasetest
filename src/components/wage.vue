@@ -32,7 +32,7 @@
         <span style="color: red">五险为基础工资的百分之二十!!</span>
       </el-form-item>
       <el-form-item label="员工名" label-width="80px">
-        <el-input v-model="formLabelAlign.ename" />
+        <el-input v-model="formLabelAlign.name" />
       </el-form-item>
       <el-form-item label="基础工资" label-width="80px">
         <el-input v-model="formLabelAlign.baseSalary" />
@@ -68,7 +68,7 @@ let tableData = ref([]);
 const currentPage = ref(1);
 const formLabelAlign = reactive({
   id: "",
-  ename: "",
+  name: "",
   baseSalary: "",
   deductSalary: "",
   fiveInsurances: "",
@@ -76,22 +76,17 @@ const formLabelAlign = reactive({
   bonusSalary: "",
   mouth: "",
 });
-const refresh = async (id) => {
+const refresh = async (page) => {
   const res = await API({
     url: "/salary/page",
     method: "get",
     params: {
-      page: currentPage.value,
+      page: page || 1,
       pageSize: 10,
     },
-  }).then((res) => {
-    tableData.value = res.data.data.data;
-    currentPage.value = page;
-    // $message.success(res.data.data.msg);
   });
-
-  tableData.value = res.data.data;
-  console.log(tableData.value);
+  tableData.value = res.data.data.data;
+  total.value = res.data.data.total;
 
   nextTick();
 };
@@ -128,7 +123,7 @@ const confirm = () => {
     method: "post",
     data: salary,
   }).then(() => {
-    refresh(router.currentRoute.value.query.id);
+    refresh();
   });
 
   renew();
@@ -136,7 +131,7 @@ const confirm = () => {
   close.value = false;
 };
 onMounted(() => {
-  refresh(router.currentRoute.value.query.id);
+  refresh(1);
 });
 </script>
 
