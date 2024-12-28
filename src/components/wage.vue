@@ -84,6 +84,10 @@ const refresh = async (id) => {
       page: currentPage.value,
       pageSize: 10,
     },
+  }).then((res) => {
+    tableData.value = res.data.data.data;
+    currentPage.value = page;
+    // $message.success(res.data.data.msg);
   });
 
   tableData.value = res.data.data;
