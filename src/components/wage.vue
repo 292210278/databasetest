@@ -21,6 +21,13 @@
       </template>
     </el-table-column>
   </el-table>
+  <el-pagination
+    class="pagination"
+    background
+    layout="prev, pager, next"
+    :total="total"
+    @current-change="handlePageChange"
+  />
   <div class="changeBody" :class="{ flex: close }">
     <el-form
       :label-position="labelPosition"
@@ -92,6 +99,26 @@ const refresh = async (page) => {
 };
 const cancle = () => {
   close.value = false;
+};
+
+const handlePageChange = (page) => {
+  updateSlicedTableData(page);
+};
+
+const updateSlicedTableData = (page) => {
+  // slicedTableData.value = tableData.slice(start, end);
+  API({
+    url: "/salary/page",
+    method: "get",
+    params: {
+      page: currentPage.value,
+      pageSize: pageSize,
+    },
+  }).then((res) => {
+    tableData.value = res.data.data.data;
+    currentPage.value = page;
+    // $message.success(res.data.data.msg);
+  });
 };
 
 let renew = () => {

@@ -294,7 +294,7 @@ const changeSliced = () => {
   // slicedTableData = ref(tableData.slice(0, 10));
 };
 
-const updateSlicedTableData = () => {
+const updateSlicedTableData = (page) => {
   // slicedTableData.value = tableData.slice(start, end);
   API({
     url: "/employee/page",
