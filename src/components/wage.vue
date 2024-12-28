@@ -65,6 +65,7 @@ const labelPosition = ref<FormProps["labelPosition"]>("right");
 let close = ref(false);
 // let tableData = ref([]);
 let tableData = ref([]);
+const currentPage = ref(1);
 const formLabelAlign = reactive({
   id: "",
   ename: "",
@@ -77,10 +78,11 @@ const formLabelAlign = reactive({
 });
 const refresh = async (id) => {
   const res = await API({
-    url: "/salary/getone",
+    url: "/salary/page",
     method: "get",
     params: {
-      id: id,
+      page: currentPage.value,
+      pageSize: 10,
     },
   });
 
