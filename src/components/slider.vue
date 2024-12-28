@@ -26,6 +26,11 @@
               ><span style="color: aliceblue">部门</span>
             </template>
           </el-sub-menu>
+          <el-sub-menu @click="toWage">
+            <template #title
+              ><span style="color: aliceblue">薪资</span>
+            </template>
+          </el-sub-menu>
           <el-sub-menu index="3" @click="toDepartment"> </el-sub-menu>
           <el-sub-menu index="3" @click="toDepartment"> </el-sub-menu>
           <el-sub-menu index="3" @click="toDepartment"> </el-sub-menu>
@@ -84,6 +89,10 @@ const toClient = () => {
 };
 const toDepartment = () => {
   router.push("/department");
+};
+
+const toWage = () => {
+  router.push("/wage");
 };
 </script>
 

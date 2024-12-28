@@ -9,7 +9,7 @@
   <el-button
     type="primary"
     @click="addEmployee"
-    style="margin: 20px; margin-left: 1300px"
+    style="margin: 20px; margin-left: 13px"
     >添加新员工</el-button
   >
 
@@ -287,8 +287,7 @@ let total = ref(0);
 // let slicedTableData = ref(tableData.slice(0, 10));
 
 const handlePageChange = (page) => {
-  currentPage.value = page;
-  updateSlicedTableData();
+  updateSlicedTableData(page);
 };
 
 const changeSliced = () => {
@@ -306,6 +305,7 @@ const updateSlicedTableData = () => {
     },
   }).then((res) => {
     tableData.value = res.data.data.data;
+    currentPage.value = page;
     // $message.success(res.data.data.msg);
   });
 };
