@@ -67,7 +67,8 @@ import { onMounted } from "vue";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
-
+let total = ref(0);
+const pageSize = 10;
 const labelPosition = ref<FormProps["labelPosition"]>("right");
 let close = ref(false);
 // let tableData = ref([]);
